@@ -20,8 +20,26 @@
 from http.server import HTTPServer, BaseHTTPRequestHandler
 from urllib.parse import parse_qs
 
-
 class MessageHandler(BaseHTTPRequestHandler):
+    def do_GET(self):
+        # First, send a 200 OK response.
+        self.send_response(200)
+
+        # Then send headers.
+        self.send_header('Content-type', 'text/html; charset=utf-8')
+        self.end_headers()
+
+        form = """
+        <!DOCTYPE html>
+        <title>Message Board</title>
+        <form method="POST" action="http://localhost:8000/">
+            <textarea name="message"></textarea>
+            <br>
+            <button type="submit">Post it!</button>
+        </form>
+        """
+        self.wfile.write(form.encode())
+
     def do_POST(self):
         # 1. How long was the message? (Use the Content-Length header.)
 
@@ -38,6 +56,7 @@ class MessageHandler(BaseHTTPRequestHandler):
         #message = data.get('message', 0)
         message = " ".join(parse_qs(data)['message'])
         self.wfile.write(message.encode())
+
 
 if __name__ == '__main__':
     server_address = ('', 8000)
