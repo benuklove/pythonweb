@@ -33,6 +33,10 @@ class MessageHandler(BaseHTTPRequestHandler):
         self.send_response(200)
         self.send_header('Content-type', 'text/plain; charset=utf-8')
         self.end_headers()
+        length = int(self.headers.get('Content-Length', 0))
+        data = self.rfile.read(length).decode()
+        #message = data.get('message', 0)
+        message = " ".join(parse_qs(data)['message'])
         self.wfile.write(message.encode())
 
 if __name__ == '__main__':
